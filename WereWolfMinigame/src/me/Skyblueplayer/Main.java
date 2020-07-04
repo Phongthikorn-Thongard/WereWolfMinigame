@@ -24,6 +24,7 @@ public class Main extends JavaPlugin implements Listener{
 			if (sender instanceof Player) {
 				if(p.hasPermission("Lol.use")) {
 					p.sendMessage(ChatColor.AQUA + "hello world");
+					p.sendMessage(ChatColor.AQUA + "let it go");
 					return false;
 				}
 			}
