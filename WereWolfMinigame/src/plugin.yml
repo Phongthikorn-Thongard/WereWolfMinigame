@@ -1,0 +1,8 @@
+main: me.Skyblueplayer.Main
+name: WereWolfMinigame
+author: Skyblueplayer
+version: 1.0
+
+commands:
+      hello:
+    
