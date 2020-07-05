@@ -8,13 +8,13 @@ public class Playermanager implements Listener{
 	private UUID uuid;
 	private boolean ingame;
 	private boolean isdead;
-	private boolean isWolf; //หมาป่า
-	private boolean isVillager; //ชาวบ้าน
-	private boolean isWitch; //นักพยากรณ์
-	private boolean isGunner; //มือปืน
+	private boolean isWolf;
+	private boolean isVillager;
+	private boolean isWitch;
+	private boolean isGunner; 
 	
 	public Playermanager(UUID uuid, boolean ingame, boolean isdead, boolean isWolf, boolean isVillager,
-			boolean isWitch, boolean isGunner) {//ใส่ค่าให้ผู้เล่นเพื่อตรวจสอบ
+			boolean isWitch, boolean isGunner) {
 		this.setUuid(uuid);
 		this.setIngame(ingame);
 		this.setIsdead(isdead);
