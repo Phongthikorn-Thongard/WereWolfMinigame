@@ -29,8 +29,9 @@ public class GameManager implements Listener{
 	public boolean canteleport;
 	public boolean WarnSetspawnMessage;
 	
-	public int playerneed = 4;
+	public int playerneed = 2; //TODO need 4 player
 	public int lobbycountdown = 60;
+	public int maxplayer = 12;
 	public boolean gamestart = false;
 	
 	public Location gamespawn;
@@ -64,6 +65,8 @@ public class GameManager implements Listener{
 				plugin.getConfig().getDouble("Gamespawn.y"), 
 				plugin.getConfig().getDouble("Gamespawn.z"));
 		lobbycountdown();
+		updatescore();
+		Playercheck(Bukkit.getOnlinePlayers().size());
 		canteleport = plugin.getConfig().getBoolean("canteleport.boolean");
 		WarnSetspawnMessage = plugin.getConfig().getBoolean("WarnSetspawnMessage.boolean");
 
@@ -84,7 +87,12 @@ public class GameManager implements Listener{
     			    player.spigot().sendMessage(message);
     			}
     		}
-    		Bukkit.getOnlinePlayers().forEach(online -> plugin.playerscoreboard.scorelobby(online, lobbycountdown));
+    		Bukkit.getOnlinePlayers().forEach(online -> plugin.playerscoreboard.scorelobby(online, lobbycountdown ,
+    				Bukkit.getOnlinePlayers().size(), maxplayer));
+    		if (Bukkit.getOnlinePlayers().size() <= playerneed - 1) {
+    			Bukkit.getServer().broadcastMessage(ChatColor.RED + "Need " + ChatColor.RED + remainplayer(Bukkit.getOnlinePlayers()
+    					.size(), playerneed) + ChatColor.RED + " More Player to start game");
+    		}
     }
     
     @EventHandler
@@ -112,6 +120,11 @@ public class GameManager implements Listener{
     	
     }
     
+    public int remainplayer(int online, int playerneed) {
+    	int result = playerneed - online;
+    	return result;	
+    }
+    
     public boolean Playercheck(int player) {
     	if (player >= playerneed) {// return true
     		return true;
@@ -120,7 +133,6 @@ public class GameManager implements Listener{
         }
     }
     
-
     
     public void lobbycountdown() {
     	new BukkitRunnable() {
@@ -130,8 +142,14 @@ public class GameManager implements Listener{
 				
 				// TODO Auto-generated method stub
 				if (lobbycountdown > 0) {
+					if (Playercheck(Bukkit.getOnlinePlayers().size())) {
+						if (lobbycountdown == 60) {
+							Bukkit.getServer().broadcastMessage("§eThe game will start in §f" + lobbycountdown + " seconds");
+							for (Player online : Bukkit.getOnlinePlayers()) {
+	                            online.playSound(online.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 2, 2);
+								}
+						}
 						lobbycountdown--;
-						Bukkit.getOnlinePlayers().forEach(online -> plugin.playerscoreboard.scorelobby(online, lobbycountdown));
 						if(lobbycountdown == 30) {
 							Bukkit.getServer().broadcastMessage("§eThe game will start in §f" + lobbycountdown + " seconds");
 	                        for (Player online : Bukkit.getOnlinePlayers()) {
@@ -153,11 +171,27 @@ public class GameManager implements Listener{
 							Bukkit.getServer().broadcastMessage("§eThe game will start in §f" + lobbycountdown + " seconds");
 							for (Player online : Bukkit.getOnlinePlayers()) {
 	                            online.playSound(online.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 2, 2);
+								}
 	                        }
+						}else {
+							lobbycountdown = 60;
 						}
 					}
 				}
 		}.runTaskTimer(plugin, 0, 20l);
+    }
+    
+    public void updatescore() {
+    	new BukkitRunnable() {
+			
+			@Override
+			public void run() {
+				// TODO Auto-generated method stub
+				Bukkit.getOnlinePlayers().forEach(online -> plugin.playerscoreboard.scorelobby(online, lobbycountdown ,
+						Bukkit.getOnlinePlayers().size(), maxplayer));
+				
+			}
+		}.runTaskTimer(plugin, 0, 10l);
     }
 
 }

@@ -17,20 +17,41 @@ public class PlayerScoreboard {
     private static ScoreboardManager manager;
     private static Scoreboard board;
     private static Objective objective;
+    private static Score space;
+    private static Score maxplayer;
+    private static Score space2;
     private static Score time;
+    private static Score space1;
+    private static Score credit;
     
     
-    public void scorelobby(Player player, int timeleft) {
+    public void scorelobby(Player player, int timeleft, int online, int maxplayers) {
     	manager = Bukkit.getScoreboardManager();
     	board = manager.getNewScoreboard();
-    	objective = board.registerNewObjective("WereWolf", "dummy", ChatColor.GOLD + "WereWolf by Skyblueplayer");
+    	objective = board.registerNewObjective("WereWolf", "dummy", ChatColor.YELLOW  + "" + ChatColor.BOLD + "WEREWOLF");
     	objective.setDisplaySlot(DisplaySlot.SIDEBAR);
     	
-    	time = objective.getScore(ChatColor.AQUA + "Time " + timeleft);
-    	time.setScore(4);
-    	if (gamemanager.Playercheck(Bukkit.getOnlinePlayers().size()) == false) {
-    		
-    	}
+    	space1 = objective.getScore("   ");
+    	space1.setScore(8);
+    	
+    	maxplayer = objective.getScore("Players: " + ChatColor.GREEN + online + ChatColor.GREEN +"/" + ChatColor.GREEN + maxplayers);
+    	maxplayer.setScore(7);
+    	
+    	space2 = objective.getScore("  ");
+    	space2.setScore(6);
+    	
+		if (gamemanager.Playercheck(Bukkit.getOnlinePlayers().size()) == false) {
+			time = objective.getScore("Wating for player...   ");
+		}else {
+			time = objective.getScore("Time left: " + ChatColor.GREEN  + timeleft + "     ");
+		}
+		time.setScore(5);
+    	
+    	space = objective.getScore(" ");
+    	space.setScore(4);
+
+    	credit = objective.getScore(ChatColor.YELLOW + "By Skyblueplayer");
+    	credit.setScore(1);
     	player.setScoreboard(board);
     }
 }
