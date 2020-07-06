@@ -5,6 +5,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import me.Skyblueplayer.Main;
+import me.Skyblueplayer.Game.GameManager;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -12,6 +13,7 @@ import org.bukkit.command.Command;
 
 public class GameCommands implements CommandExecutor{
 	private Main plugin = Main.getPlugin(Main.class);
+	GameManager g = new GameManager();
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
 			if(sender instanceof Player) {
 				Player p = (Player) sender;
@@ -28,6 +30,10 @@ public class GameCommands implements CommandExecutor{
 						plugin.getConfig().addDefault("Gamespawn.y", p.getLocation().getY());
 						plugin.getConfig().addDefault("Gamespawn.z", p.getLocation().getZ());
 						plugin.saveConfig();
+					}
+					else if(args[0].equalsIgnoreCase("start")) {
+						if(p.isOp() == false) return true;
+						g.startgame();
 					}
 					
 				}else {

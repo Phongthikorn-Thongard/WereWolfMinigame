@@ -26,6 +26,7 @@ public class Main extends JavaPlugin implements Listener{
 	public ArrayList<UUID> playersInGame = new ArrayList<>();
 	
 	public GameManager gamemanager;
+	public PlayerScoreboard playerscoreboard;
 	
 	boolean CanbePlaceblock = false;
 	boolean CanbeBreakblock = false;
@@ -72,6 +73,7 @@ public class Main extends JavaPlugin implements Listener{
 
 	public void instanceClasses() {
 		gamemanager = new GameManager();
+		playerscoreboard = new PlayerScoreboard();
 	}
 	
 	
@@ -101,6 +103,11 @@ public class Main extends JavaPlugin implements Listener{
     }
     
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
+    	Player p = (Player) sender;
+    	if(cmd.getName().equalsIgnoreCase("hello")) {
+    		p.teleport(gamemanager.lobbyspawn);
+    		p.sendMessage("teleport online we move swifty");
+    	}
     	return true;
     }
     
