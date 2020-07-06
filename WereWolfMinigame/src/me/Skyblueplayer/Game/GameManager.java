@@ -120,19 +120,7 @@ public class GameManager implements Listener{
         }
     }
     
-    public void update() {
-    	new BukkitRunnable() {
-			
-			@Override
-			public void run() {
-				// TODO Auto-generated method stub
-				Bukkit.getOnlinePlayers().forEach(online -> plugin.playerscoreboard.scorelobby(online, lobbycountdown));
-			}
-		}.runTaskTimer(plugin, 0, 1l);
-    }
-    
-    
-    
+
     
     public void lobbycountdown() {
     	new BukkitRunnable() {
