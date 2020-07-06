@@ -23,9 +23,8 @@ public class PlayerScoreboard {
     public void scorelobby(Player player, int timeleft) {
     	manager = Bukkit.getScoreboardManager();
     	board = manager.getNewScoreboard();
-    	objective = board.registerNewObjective("WereWolf", "");
+    	objective = board.registerNewObjective("WereWolf", "dummy", ChatColor.GOLD + "WereWolf by Skyblueplayer");
     	objective.setDisplaySlot(DisplaySlot.SIDEBAR);
-    	objective.setDisplayName(ChatColor.GOLD + "WEREWOLF");
     	
     	time = objective.getScore(ChatColor.AQUA + "Time " + timeleft);
     	time.setScore(4);
