@@ -1,6 +1,8 @@
 package me.Skyblueplayer.Game;
 
+
 import java.util.UUID;
+
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -15,6 +17,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import me.Skyblueplayer.Main;
 import me.Skyblueplayer.Playerdata.Playermanager;
+import me.Skyblueplayer.random.RandomJob;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
@@ -25,6 +28,7 @@ import net.md_5.bungee.api.chat.TextComponent;
 public class GameManager implements Listener{
 	
 	private Main plugin = Main.getPlugin(Main.class);
+	private RandomJob randomjob = new RandomJob();
 	
 	public boolean canteleport;
 	public boolean WarnSetspawnMessage;
@@ -72,12 +76,14 @@ public class GameManager implements Listener{
 
 	}
 	
-	
     @EventHandler
     public void onJoin(PlayerJoinEvent e) {
             Player p = e.getPlayer();
             UUID uuid = p.getUniqueId();
-            plugin.playermanager.put(uuid, new Playermanager(uuid, false, false, false, false, false, false));
+            plugin.playermanager.put(uuid, new Playermanager(uuid, false, false, false, false, false, false, false));
+    		plugin.playersInGame.add(uuid);
+    		plugin.randomplayer.add(uuid);
+
     		if (WarnSetspawnMessage == true) {
     			TextComponent message = new TextComponent("Don't forget to set Lobbyspawn and GameSpawn location before start game (You can disable this message on config)");
     			message.setColor(ChatColor.RED);
@@ -87,12 +93,16 @@ public class GameManager implements Listener{
     			    player.spigot().sendMessage(message);
     			}
     		}
+    			
     		Bukkit.getOnlinePlayers().forEach(online -> plugin.playerscoreboard.scorelobby(online, lobbycountdown ,
     				Bukkit.getOnlinePlayers().size(), maxplayer));
-    		if (Bukkit.getOnlinePlayers().size() <= playerneed - 1) {
+    		
+    		if (Bukkit.getOnlinePlayers().size() <= playerneed - 1 && gamestart == false) {
     			Bukkit.getServer().broadcastMessage(ChatColor.RED + "Need " + ChatColor.RED + remainplayer(Bukkit.getOnlinePlayers()
     					.size(), playerneed) + ChatColor.RED + " More Player to start game");
     		}
+    		
+    		
     }
     
     @EventHandler
@@ -100,24 +110,29 @@ public class GameManager implements Listener{
     	Player p = e.getPlayer();
     	UUID uuid= p.getUniqueId();
     	
-    	if(plugin.playermanager.containsKey(uuid)) {
+		if (Bukkit.getOnlinePlayers().size() <= playerneed - 1 && gamestart == false) {
+			Bukkit.getServer().broadcastMessage(ChatColor.RED + "Need " + ChatColor.RED + remainplayer(Bukkit.getOnlinePlayers()
+					.size(), playerneed) + ChatColor.RED + " More Player to start game");
+		}
+    	
+    	if (plugin.playermanager.containsKey(uuid) && plugin.playersInGame.contains(uuid)) {
     		plugin.playermanager.remove(uuid);
+    		plugin.playersInGame.remove(uuid);
+    		plugin.randomplayer.remove(uuid);
+    		plugin.Ingame.remove(uuid);
     	}
+    	
+    	
+    	//Bukkit.getOnlinePlayers().forEach(onlineingame -> plugin.playerscoreboard.scoreGame(onlineingame, 
+    			//plugin.Ingame.size()));
+    	
+    	
+    	
     }
     
     @EventHandler
     public void foodlevelchangeEvent(FoodLevelChangeEvent e) {
     	e.setCancelled(true);
-    }
-    
-    public void startgame() {
-    	gamestart = true;
-    	setUpGame(); //get coordinate form config
-    	 for (Player online : Bukkit.getOnlinePlayers()) {
-    		online.getInventory().clear();
-    		online.teleport(gamespawn);
-    	 }
-    	
     }
     
     public int remainplayer(int online, int playerneed) {
@@ -133,14 +148,38 @@ public class GameManager implements Listener{
         }
     }
     
+    int PlayerIngame = plugin.Ingame.size();
+    public void Gamestart() {
+    	if (gamestart == false) {
+    		randomjob.randomjob(Bukkit.getOnlinePlayers().size());
+    	}
+    	Bukkit.getOnlinePlayers().forEach(player -> {
+        	UUID uuid = player.getUniqueId();
+        	setUpGame();
+			player.teleport(gamespawn);
+			player.getInventory().clear();
+			if (gamestart == false) {
+				plugin.Ingame.add(uuid);
+			}
+    		plugin.playerscoreboard.scoreGame(player, plugin.Ingame.size());//TODO
+    	});
+    }
     
+
     public void lobbycountdown() {
     	new BukkitRunnable() {
 			
 			@Override
 			public void run() {
+			if (gamestart == false) {
+				if (lobbycountdown == 0) {
 				
-				// TODO Auto-generated method stub
+						Gamestart();
+						gamestart = true;
+				}
+			}
+			
+			if (gamestart == false) {
 				if (lobbycountdown > 0) {
 					if (Playercheck(Bukkit.getOnlinePlayers().size())) {
 						if (lobbycountdown == 60) {
@@ -171,27 +210,37 @@ public class GameManager implements Listener{
 							Bukkit.getServer().broadcastMessage("§eThe game will start in §f" + lobbycountdown + " seconds");
 							for (Player online : Bukkit.getOnlinePlayers()) {
 	                            online.playSound(online.getLocation(), Sound.BLOCK_NOTE_BLOCK_PLING, 2, 2);
-								}
-	                        }
+							}
+						}
+							
 						}else {
 							lobbycountdown = 60;
+							}
 						}
 					}
 				}
 		}.runTaskTimer(plugin, 0, 20l);
     }
     
-    public void updatescore() {
+    public void updatescore() {//update scoreboard
     	new BukkitRunnable() {
 			
 			@Override
 			public void run() {
-				// TODO Auto-generated method stub
-				Bukkit.getOnlinePlayers().forEach(online -> plugin.playerscoreboard.scorelobby(online, lobbycountdown ,
-						Bukkit.getOnlinePlayers().size(), maxplayer));
-				
+				if (gamestart == false) {
+					Bukkit.getOnlinePlayers().forEach(online -> plugin.playerscoreboard.scorelobby(online, lobbycountdown ,
+							Bukkit.getOnlinePlayers().size(), maxplayer));
+				}
+				if (gamestart == true) {
+					Bukkit.getOnlinePlayers().forEach(onlineingame -> plugin.playerscoreboard.scoreGame(
+							onlineingame, plugin.Ingame.size()));
+				}
 			}
-		}.runTaskTimer(plugin, 0, 10l);
+		}.runTaskTimer(plugin, 0, 20l);
     }
+    
+	public void setGamestart(boolean gamestart) {
+		this.gamestart = gamestart;
+	}
 
 }

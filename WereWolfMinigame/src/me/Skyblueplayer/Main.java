@@ -16,6 +16,7 @@ import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import me.Skyblueplayer.Game.GameManager;
+import me.Skyblueplayer.Game.GameMechanics;
 import me.Skyblueplayer.Playerdata.Playermanager;
 import me.Skyblueplayer.commands.GameCommands;
 
@@ -24,8 +25,12 @@ public class Main extends JavaPlugin implements Listener{
 	private static Main instance;
 	public HashMap<UUID,Playermanager> playermanager = new HashMap<UUID,Playermanager>();
 	public ArrayList<UUID> playersInGame = new ArrayList<>();
+	public ArrayList<UUID> randomplayer = new ArrayList<>();
+	public ArrayList<UUID> villager = new ArrayList<>();
+	public ArrayList<UUID> Ingame = new ArrayList<>();
 	
 	public GameManager gamemanager;
+	public GameMechanics gamemechanics;
 	public PlayerScoreboard playerscoreboard;
 	
 	boolean CanbePlaceblock = false;
@@ -73,6 +78,7 @@ public class Main extends JavaPlugin implements Listener{
 
 	public void instanceClasses() {
 		gamemanager = new GameManager();
+		gamemechanics = new GameMechanics();
 		playerscoreboard = new PlayerScoreboard();
 	}
 	

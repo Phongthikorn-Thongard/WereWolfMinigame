@@ -11,17 +11,19 @@ public class Playermanager implements Listener{
 	private boolean isWolf;
 	private boolean isVillager;
 	private boolean isWitch;
-	private boolean isGunner; 
+	private boolean isGunner;
+	private boolean hasjob;
 	
 	public Playermanager(UUID uuid, boolean ingame, boolean isdead, boolean isWolf, boolean isVillager,
-			boolean isWitch, boolean isGunner) {
+			boolean isWitch, boolean isGunner, boolean hasjob) {
 		this.setUuid(uuid);
-		this.setIngame(ingame);
+		this.setIngame(ingame);	
 		this.setIsdead(isdead);
 		this.setWolf(isWolf);
 		this.setVillager(isVillager);
 		this.setWitch(isWitch);
 		this.setGunner(isGunner);
+		this.setHasjob(hasjob);
 	}
 
 	public UUID getUuid() {
@@ -78,5 +80,13 @@ public class Playermanager implements Listener{
 
 	public void setGunner(boolean isGunner) {
 		this.isGunner = isGunner;
+	}
+
+	public boolean isHasjob() {
+		return hasjob;
+	}
+
+	public void setHasjob(boolean hasjob) {
+		this.hasjob = hasjob;
 	}
 }

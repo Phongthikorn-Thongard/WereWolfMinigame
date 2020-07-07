@@ -2,6 +2,7 @@ main: me.Skyblueplayer.Main
 name: WereWolfMinigame
 author: Skyblueplayer
 version: 1.0
+api-version : 1.13
 
 commands:
       hello:
