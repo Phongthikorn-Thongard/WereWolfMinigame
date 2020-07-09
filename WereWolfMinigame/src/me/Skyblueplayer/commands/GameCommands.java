@@ -6,6 +6,7 @@ import org.bukkit.entity.Player;
 
 import me.Skyblueplayer.Main;
 import me.Skyblueplayer.Game.GameManager;
+import me.Skyblueplayer.Game.GameMechanics;
 import me.Skyblueplayer.random.RandomJob;
 
 import org.bukkit.Bukkit;
@@ -16,6 +17,7 @@ import org.bukkit.command.Command;
 public class GameCommands implements CommandExecutor{
 	private Main plugin = Main.getPlugin(Main.class);
 	GameManager g = new GameManager();
+	GameMechanics gm = new GameMechanics();
 	RandomJob rj = new RandomJob();
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
 			if(sender instanceof Player) {
@@ -39,10 +41,21 @@ public class GameCommands implements CommandExecutor{
 						g.Gamestart();
 						}
 					}
-					else if(args[0].equalsIgnoreCase("addday")) {
+					else if(args[0].equalsIgnoreCase("day")) {
 						if(p.hasPermission("Start.game")) {
-							Bukkit.getOnlinePlayers().forEach(onlineingame -> plugin.playerscoreboard.scoreGame(onlineingame, 
-					    			plugin.Ingame.size()));
+							gm.switch_night_to_day();
+						}
+					}
+					else if(args[0].equalsIgnoreCase("night")) {
+						if(p.hasPermission("Start.game")) {
+							
+							gm.switch_day_to_night();	
+						}
+					}
+					
+					else if(args[0].equalsIgnoreCase("time")) {
+						if(p.hasPermission("Start.game")) {
+							Bukkit.getServer().broadcastMessage("" + gm.time);
 						}
 					}
 					

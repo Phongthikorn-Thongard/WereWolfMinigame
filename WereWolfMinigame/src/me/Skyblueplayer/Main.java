@@ -3,9 +3,11 @@ package me.Skyblueplayer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.UUID;
-
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.GameMode;
+import org.bukkit.GameRule;
+import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -49,6 +51,11 @@ public class Main extends JavaPlugin implements Listener{
 		loadConfig();
 		setInstance(instance);
 		getCommand("werewolfmg").setExecutor(new GameCommands());
+		Bukkit.getServer().setDefaultGameMode(GameMode.ADVENTURE);
+		for (World world : Bukkit.getServer().getWorlds()) {
+			world.setGameRule(GameRule.DO_DAYLIGHT_CYCLE, false);
+			world.setTime(6000l);
+		}
 		
 	}
 	
